@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  phone       String?   @unique
+  password    String
+  isVerified  Boolean   @default(false)
+  fcmToken    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  settings    UserSettings?
+  banks       BankAccount[]
+  expenses    Expense[]
+}
+
+model UserSettings {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id])
+  monthlySalary   Float   @default(56000)
+  savingsPct      Float   @default(0.30)
+  efTargetMonths  Float   @default(6)
+  flatDpTarget    Float   @default(200000)
+  defaultRd       Float   @default(13000)
+  defaultSip      Float   @default(500)
+  defaultChit     Float   @default(2000)
+  defaultEf       Float   @default(5000)
+}
+
+model BankAccount {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  bankName      String
+  accountNumber String
+  holderName    String
+  accountType   String
+  ifscCode      String?
+  branchAddress String?
+  nickname      String?
+  createdAt     DateTime  @default(now())
+  expenses      Expense[]
+}
+
+model Expense {
+  id            String       @id @default(uuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  amount        Float
+  categoryId    String
+  note          String?
+  date          DateTime
+  month         String
+  paymentMethod String
+  bankId        String?
+  bank          BankAccount? @relation(fields: [bankId], references: [id])
+  createdAt     DateTime     @default(now())
+}
