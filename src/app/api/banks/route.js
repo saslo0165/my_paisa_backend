@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, badRequestResponse } from '@/lib/middleware'
 import { encryptText, maskAccountNumber } from '@/lib/encrypt'
 import { validateRequired } from '@/lib/validate'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * GET /api/banks
@@ -13,12 +14,12 @@ export async function GET(request) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const banks = await prisma.bankAccount.findMany({
+        const banks = await prisma.bank.findMany({
             where: { userId: user.userId },
             orderBy: { createdAt: 'desc' },
             include: {
                 _count: {
-                    select: { expenses: true }
+                    select: { expenses: true, savings: true }
                 }
             }
         })
@@ -29,24 +30,16 @@ export async function GET(request) {
             accountNumber: maskAccountNumber(bank.accountNumber)
         }))
 
-        // Calculate total balance sum
-        // Note: For now, we don't have a 'balance' field in BankAccount, 
-        // but Milestone 6 mentions opening/closing balances.
-        // Let's assume we sum current balances if we added that field, 
-        // but looking at Step 1, we didn't add a 'balance' field to BankAccount.
-        // However, Step 4 says "Also return total balance sum".
-        // I should probably add a balance field if it's needed for calculations.
-        // Wait, the user request for BankAccount model in Step 1 DID NOT have balance.
-        // But Step 7 (Expenses) says "Deduct amount from bank balance".
-        // I will add a `balance Float @default(0)` to BankAccount model now.
+        // Calculate total balance sum in paise (BigInt)
+        const totalBalancePaise = processedBanks.reduce((sum, bank) => sum + (bank.balancePaise || 0n), 0n)
 
-        const totalBalance = processedBanks.reduce((sum, bank) => sum + (bank.balance || 0), 0)
-
-        return Response.json({
+        // jsonResponse will safely serialize the BigInts to standard Javascript Numbers
+        return jsonResponse({
             banks: processedBanks,
-            totalBalance
+            totalBalancePaise
         })
     } catch (error) {
+        console.error("GET /api/banks Error:", error)
         return serverErrorResponse(error)
     }
 }
@@ -72,7 +65,7 @@ export async function POST(request) {
         const {
             bankName, accountNumber, holderName,
             accountType, nickname,
-            initialBalance
+            initialBalance // Assuming input is still in Rupees (float) for backward compatibility
         } = body
 
         // Encrypt accountNumber before saving
@@ -81,7 +74,7 @@ export async function POST(request) {
         // Auto-generate nickname if not provided
         const finalNickname = nickname || `${bankName} ${accountType}`
 
-        const newBank = await prisma.bankAccount.create({
+        const newBank = await prisma.bank.create({
             data: {
                 userId: user.userId,
                 bankName,
@@ -89,16 +82,17 @@ export async function POST(request) {
                 holderName,
                 accountType,
                 nickname: finalNickname,
-                balance: initialBalance || 0
+                balancePaise: toPaise(initialBalance || 0)
             }
         })
 
         // Return created bank with masked account number
-        return Response.json({
+        return jsonResponse({
             ...newBank,
             accountNumber: maskAccountNumber(accountNumber)
         }, { status: 201 })
     } catch (error) {
+        console.error("POST /api/banks Error:", error)
         return serverErrorResponse(error)
     }
 }

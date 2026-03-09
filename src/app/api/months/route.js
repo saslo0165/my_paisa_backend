@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, badRequestResponse } from '@/lib/middleware'
 import { validateMonth, validateRequired } from '@/lib/validate'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * GET /api/months
@@ -59,12 +60,13 @@ export async function GET(request) {
             }
         }))
 
-        return Response.json({
+        return jsonResponse({
             months: enrichedMonths,
             totalMonths: enrichedMonths.length,
             currentMonth: currentMonthStr
         })
     } catch (error) {
+        console.error("GET /api/months Error:", error)
         return serverErrorResponse(error)
     }
 }
@@ -141,14 +143,15 @@ export async function POST(request) {
 
             // b. Handle salary bank setup
             if (salaryBankId) {
-                const bank = await tx.bankAccount.findFirst({
+                const bank = await tx.bank.findFirst({
                     where: { id: salaryBankId, userId: user.userId }
                 })
                 if (!bank) throw new Error("Salary bank does not belong to you")
 
-                await tx.bankAccount.update({
+                const openingBalancePaise = toPaise(openingBalance)
+                await tx.bank.update({
                     where: { id: salaryBankId },
-                    data: { balance: openingBalance }
+                    data: { balancePaise: openingBalancePaise }
                 })
 
                 // c. Create opening balance record for bank
@@ -176,7 +179,7 @@ export async function POST(request) {
             return newMonth
         })
 
-        return Response.json({
+        return jsonResponse({
             month: result,
             availableToSpend,
             transferChecklist: [
@@ -192,6 +195,7 @@ export async function POST(request) {
         if (error.message === "Salary bank does not belong to you") {
             return Response.json({ error: "Forbidden", message: error.message }, { status: 403 })
         }
+        console.error("POST /api/months Error:", error)
         return serverErrorResponse(error)
     }
 }

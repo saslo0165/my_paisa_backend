@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, notFoundResponse, badRequestResponse } from '@/lib/middleware'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * GET /api/expenses/:id
@@ -22,7 +23,7 @@ export async function GET(request, { params }) {
 
         if (!expense) return notFoundResponse("Expense")
 
-        return Response.json(expense)
+        return jsonResponse(expense)
     } catch (error) {
         console.error("GET /api/expenses/:id Error:", error)
         return serverErrorResponse(error)
@@ -53,9 +54,10 @@ export async function PUT(request, { params }) {
 
             // a. Reverse Old Effects
             if (['upi', 'debit'].includes(oldExpense.paymentMethod) && oldExpense.bankId) {
-                await tx.bankAccount.update({
+                const oldAmountPaise = toPaise(oldExpense.amount)
+                await tx.bank.update({
                     where: { id: oldExpense.bankId },
-                    data: { balance: { increment: oldExpense.amount } }
+                    data: { balancePaise: { increment: oldAmountPaise } }
                 })
             } else if (oldExpense.paymentMethod === 'creditCard' && oldExpense.cardId) {
                 await tx.creditCard.update({
@@ -70,19 +72,20 @@ export async function PUT(request, { params }) {
             // b. Apply New Effects
             // Merge old and new values for deduction logic
             const newAmount = body.amount !== undefined ? body.amount : oldExpense.amount
+            const newAmountPaise = toPaise(newAmount)
             const newMethod = body.paymentMethod || oldExpense.paymentMethod
             const newBankId = body.bankId !== undefined ? body.bankId : oldExpense.bankId
             const newCardId = body.cardId !== undefined ? body.cardId : oldExpense.cardId
 
             if (['upi', 'debit'].includes(newMethod) && newBankId) {
                 // Fetch fresh bank balance to check
-                const targetBank = await tx.bankAccount.findUnique({ where: { id: newBankId } })
-                if (!targetBank || targetBank.balance < newAmount) {
+                const targetBank = await tx.bank.findUnique({ where: { id: newBankId } })
+                if (!targetBank || targetBank.balancePaise < newAmountPaise) {
                     throw new Error("Insufficient bank balance")
                 }
-                await tx.bankAccount.update({
+                await tx.bank.update({
                     where: { id: newBankId },
-                    data: { balance: { decrement: newAmount } }
+                    data: { balancePaise: { decrement: newAmountPaise } }
                 })
             } else if (newMethod === 'creditCard' && newCardId) {
                 await tx.creditCard.update({
@@ -105,7 +108,7 @@ export async function PUT(request, { params }) {
             })
         })
 
-        return Response.json(updatedExpense)
+        return jsonResponse(updatedExpense)
     } catch (error) {
         console.error("PUT /api/expenses/:id Error:", error)
         if (error.message === "Insufficient bank balance") {
@@ -138,11 +141,12 @@ export async function DELETE(request, { params }) {
 
             // Reverse effects
             if (['upi', 'debit'].includes(expense.paymentMethod) && expense.bankId) {
-                const bank = await tx.bankAccount.update({
+                const amountPaise = toPaise(expense.amount)
+                const bank = await tx.bank.update({
                     where: { id: expense.bankId },
-                    data: { balance: { increment: expense.amount } }
+                    data: { balancePaise: { increment: amountPaise } }
                 })
-                updatedBankBalance = bank.balance
+                updatedBankBalance = bank.balancePaise
             } else if (expense.paymentMethod === 'creditCard' && expense.cardId) {
                 const card = await tx.creditCard.update({
                     where: { id: expense.cardId },
@@ -151,7 +155,7 @@ export async function DELETE(request, { params }) {
                         outstandingBill: { decrement: expense.amount }
                     }
                 })
-                // Ensure they don't go below 0 (though logically shouldn't)
+                // Ensure they don't go below 0
                 if (card.cycleSpend < 0 || card.outstandingBill < 0) {
                     await tx.creditCard.update({
                         where: { id: expense.cardId },
@@ -170,9 +174,9 @@ export async function DELETE(request, { params }) {
             return { updatedBankBalance, updatedCardCycleSpend }
         })
 
-        return Response.json({
+        return jsonResponse({
             message: "Expense deleted successfully",
-            bankBalance: result.updatedBankBalance,
+            bankBalancePaise: result.updatedBankBalance,
             cardCycleSpend: result.updatedCardCycleSpend
         })
     } catch (error) {

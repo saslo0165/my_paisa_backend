@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, badRequestResponse } from '@/lib/middleware'
 import { validateMonth, validateRequired } from '@/lib/validate'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * POST /api/balance
@@ -38,7 +39,7 @@ export async function POST(request) {
         }
 
         // 4. Verify bank ownership
-        const bank = await prisma.bankAccount.findFirst({
+        const bank = await prisma.bank.findFirst({
             where: { id: bankId, userId: user.userId }
         })
         if (!bank) {
@@ -71,25 +72,24 @@ export async function POST(request) {
                 }
             })
 
-            // Update actual bank balance
-            // User says: "Also update bank_accounts.balance with the new amount"
-            // This ensures bank balance stays current with the latest reported balance.
-            await tx.bankAccount.update({
+            // Update actual bank balance using precision conversion
+            await tx.bank.update({
                 where: { id: bankId },
-                data: { balance: amount }
+                data: { balancePaise: toPaise(amount) }
             })
 
             return savedBalance
         })
 
-        // Return saved balance with bank details (re-fetch if needed or just return)
+        // Return saved balance with bank details
         const finalBalance = await prisma.monthlyBalance.findUnique({
             where: { id: result.id },
             include: { bank: true }
         })
 
-        return Response.json(finalBalance, { status: 201 })
+        return jsonResponse(finalBalance, { status: 201 })
     } catch (error) {
+        console.error("POST /api/balance Error:", error)
         return serverErrorResponse(error)
     }
 }

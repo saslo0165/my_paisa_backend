@@ -1,18 +1,18 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, notFoundResponse, badRequestResponse } from '@/lib/middleware'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * POST /api/cards/:id/pay
  * Auth: Required
  * Purpose: Pay credit card bill from bank account
- * Flutter comparison: This is like a Batch DB operation in sqflite
  */
 export async function POST(request, { params }) {
     try {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
         const { amount, bankId } = await request.json()
 
         if (!amount || amount <= 0) return badRequestResponse("Invalid amount")
@@ -22,19 +22,22 @@ export async function POST(request, { params }) {
         const card = await prisma.creditCard.findFirst({
             where: { id, userId: user.userId }
         })
-        const bank = await prisma.bankAccount.findFirst({
+        const bank = await prisma.bank.findFirst({
             where: { id: bankId, userId: user.userId }
         })
 
         if (!card) return notFoundResponse("Credit card")
         if (!bank) return notFoundResponse("Bank account")
 
-        // 3. Validate bank balance
-        if (bank.balance < amount) {
+        // 3. Convert payment amount to paise
+        const amountPaise = toPaise(amount)
+
+        // 4. Validate bank balance
+        if (bank.balancePaise < amountPaise) {
             return badRequestResponse("Insufficient balance in bank account")
         }
 
-        // 4. Prisma Transaction: Either both succeed or both fail
+        // 5. Prisma Transaction: Either both succeed or both fail
         const [updatedCard, updatedBank] = await prisma.$transaction([
             // Deduct from outstanding / reset cycle spend
             prisma.creditCard.update({
@@ -45,23 +48,23 @@ export async function POST(request, { params }) {
                 }
             }),
             // Deduct from bank
-            prisma.bankAccount.update({
+            prisma.bank.update({
                 where: { id: bankId },
                 data: {
-                    balance: { decrement: amount }
+                    balancePaise: { decrement: amountPaise }
                 }
             })
         ])
 
-        // Trigger notification (log for now)
         console.log(`[NOTIFICATION] CC bill of ${amount} paid from bank ${bank.bankName}`)
 
-        return Response.json({
+        return jsonResponse({
             message: "Bill paid successfully",
             card: updatedCard,
             bank: updatedBank
         })
     } catch (error) {
+        console.error("POST /api/cards/:id/pay Error:", error)
         return serverErrorResponse(error)
     }
 }

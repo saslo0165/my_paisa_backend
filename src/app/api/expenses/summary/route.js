@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, badRequestResponse } from '@/lib/middleware'
+import { jsonResponse } from '@/lib/currency'
 
 /**
  * GET /api/expenses/summary
@@ -22,7 +23,7 @@ export async function GET(request) {
         const [expenses, monthData, banks, cards, settings] = await Promise.all([
             prisma.expense.findMany({ where: { userId: user.userId, month } }),
             prisma.monthData.findUnique({ where: { userId_month: { userId: user.userId, month } } }),
-            prisma.bankAccount.findMany({ where: { userId: user.userId } }),
+            prisma.bank.findMany({ where: { userId: user.userId } }),
             prisma.creditCard.findMany({ where: { userId: user.userId } }),
             prisma.userSettings.findUnique({ where: { userId: user.userId } })
         ])
@@ -65,17 +66,14 @@ export async function GET(request) {
             percentage: totalExpenses > 0 ? parseFloat(((data.total / totalExpenses) * 100).toFixed(1)) : 0
         }))
 
-        // 4. Daily Spend (Full month array)
+        // 4. Daily Spend
         const dailySpendMap = {}
         expenses.forEach(e => {
             const dateStr = e.date.toISOString().split('T')[0]
             dailySpendMap[dateStr] = (dailySpendMap[dateStr] || 0) + e.amount
         })
 
-        // Generate all days for the month (assume month format is "Mar '26")
-        // Note: For simplicity, we'll just return days that have expenses or a fixed 31 day range if we can parse it.
-        // Let's just return days that exist in the month if we can't easily parse month string here.
-        // Actually, let's try a simple parse for the month to get days.
+        // Generate all days for the month
         const monthParts = month.split(" '") // ["Mar", "26"]
         const monthName = monthParts[0]
         const year = 2000 + parseInt(monthParts[1])
@@ -102,22 +100,24 @@ export async function GET(request) {
         const actualSavings = salary - totalInvested - totalExpenses
         const targetSavingsPct = settings?.savingsPct || 0.30
 
-        // 7. Bank Summary
+        // 7. Bank Summary 
         const bankSummary = banks.map(b => {
             const ccOnThisBank = cards.filter(c => c.bankName === b.bankName).reduce((sum, c) => sum + c.outstandingBill, 0)
             return {
                 bankId: b.id,
                 nickname: b.nickname,
                 bankName: b.bankName,
-                currentBalance: b.balance,
+                currentBalancePaise: Number(b.balancePaise),
+                currentBalance: Number(b.balancePaise) / 100, // Provides backward compatibility for Flutter floating point math
                 ccOutstanding: ccOnThisBank
             }
         })
 
-        const totalBankBalance = banks.reduce((sum, b) => sum + b.balance, 0)
+        const totalBankBalance = banks.reduce((sum, b) => sum + Number(b.balancePaise) / 100, 0)
         const totalCCOutstanding = cards.reduce((sum, c) => sum + c.outstandingBill, 0)
 
-        return Response.json({
+        // jsonResponse safely serializes any missed BigInts
+        return jsonResponse({
             month,
             totals: {
                 totalExpenses,
@@ -149,10 +149,13 @@ export async function GET(request) {
                 isOnTarget: (salary > 0 && (actualSavings / salary) >= targetSavingsPct)
             },
             bankSummary,
+            totalBankBalance,
+            totalCCOutstanding,
             realAvailable: totalBankBalance - totalCCOutstanding
         })
 
     } catch (error) {
+        console.error("GET /api/expenses/summary Error:", error)
         return serverErrorResponse(error)
     }
 }

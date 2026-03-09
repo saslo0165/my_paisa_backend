@@ -1,0 +1,215 @@
+
+> mypaisa-backend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.19:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 448ms
+ POST /api/auth/register 201 in 6.9s (compile: 129ms, render: 6.7s)
+ POST /api/banks 201 in 820ms (compile: 176ms, render: 644ms)
+ POST /api/auth/register 201 in 2.5s (compile: 1273µs, render: 2.5s)
+ POST /api/users/319eb804-6ba7-4a1f-ac64-f96ba9be8c9b/banks/select 200 in 1927ms (compile: 619ms, render: 1308ms)
+ GET /api/users/319eb804-6ba7-4a1f-ac64-f96ba9be8c9b/banks/current 200 in 2.1s (compile: 503ms, render: 1601ms)
+POST /api/users/[userId]/banks/select Error: Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].bank.findFirst()` invocation in
+/Users/hardikthakker/Documents/FlutterProjects/mypaisa-backend/.next/dev/server/chunks/[root-of-the-server]__758d86a5._.js:364:163
+
+  361     });
+  362 }
+  363 // STEP C — Verify bank belongs to user
+→ 364 const bank = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].bank.findFirst(
+Inconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `k` at 3
+    at <unknown> (src/app/api/users/[userId]/banks/select/route.js:38:40)
+    at async POST (src/app/api/users/[userId]/banks/select/route.js:38:22)
+  36 |
+  37 |         // STEP C — Verify bank belongs to user
+> 38 |         const bank = await prisma.bank.findFirst({
+     |                                        ^
+  39 |             where: {
+  40 |                 id: bankId,
+  41 |                 userId: pathUserId, {
+  code: 'P2023',
+  meta: [Object],
+  clientVersion: '6.19.2'
+}
+ POST /api/users/319eb804-6ba7-4a1f-ac64-f96ba9be8c9b/banks/select 500 in 136ms (compile: 2ms, render: 134ms)
+ POST /api/auth/register 201 in 2.9s (compile: 3ms, render: 2.9s)
+ POST /api/banks 201 in 326ms (compile: 3ms, render: 323ms)
+ POST /api/auth/register 201 in 2.5s (compile: 1545µs, render: 2.5s)
+ POST /api/users/150b2dba-fb54-4af5-a77c-0d67db5228fa/banks/select 200 in 644ms (compile: 4ms, render: 641ms)
+ GET /api/users/150b2dba-fb54-4af5-a77c-0d67db5228fa/banks/current 200 in 960ms (compile: 3ms, render: 957ms)
+POST /api/users/[userId]/banks/select Error: Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].bank.findFirst()` invocation in
+/Users/hardikthakker/Documents/FlutterProjects/mypaisa-backend/.next/dev/server/chunks/[root-of-the-server]__758d86a5._.js:364:163
+
+  361     });
+  362 }
+  363 // STEP C — Verify bank belongs to user
+→ 364 const bank = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].bank.findFirst(
+Inconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `k` at 3
+    at <unknown> (src/app/api/users/[userId]/banks/select/route.js:38:40)
+    at async POST (src/app/api/users/[userId]/banks/select/route.js:38:22)
+  36 |
+  37 |         // STEP C — Verify bank belongs to user
+> 38 |         const bank = await prisma.bank.findFirst({
+     |                                        ^
+  39 |             where: {
+  40 |                 id: bankId,
+  41 |                 userId: pathUserId, {
+  code: 'P2023',
+  meta: [Object],
+  clientVersion: '6.19.2'
+}
+ POST /api/users/150b2dba-fb54-4af5-a77c-0d67db5228fa/banks/select 500 in 99ms (compile: 3ms, render: 96ms)
+ POST /api/auth/register 201 in 3.2s (compile: 8ms, render: 3.2s)
+ POST /api/banks 201 in 324ms (compile: 1549µs, render: 323ms)
+ POST /api/auth/register 201 in 2.5s (compile: 1026µs, render: 2.5s)
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/banks/select 200 in 686ms (compile: 43ms, render: 643ms)
+ GET /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/banks/current 200 in 959ms (compile: 4ms, render: 954ms)
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/banks/select 404 in 6ms (compile: 3ms, render: 3ms)
+ POST /api/users/75b7da89-4842-45b1-9923-d236a114e0b7/banks/select 404 in 323ms (compile: 2ms, render: 321ms)
+{"timestamp":"2026-03-09T12:39:03.809Z","action":"create_saving","status":"success","durationMs":4455,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"ef3ad366-d641-4744-b316-7f16e187f38e","ipAddress":"::1","savingType":"rd","amountPaise":1300000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"5600000","balanceAfter":"4300000","amountINR":"₹13,000.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 201 in 5.0s (compile: 548ms, render: 4.5s)
+{"timestamp":"2026-03-09T12:39:06.685Z","action":"create_saving","status":"success","durationMs":2863,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"79d5f7ae-2aed-432c-9b6a-b15786c7e21c","ipAddress":"::1","savingType":"sip","amountPaise":50000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"4300000","balanceAfter":"4250000","amountINR":"₹500.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 201 in 2.9s (compile: 4ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:39:09.874Z","action":"create_saving","status":"success","durationMs":3180,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"5a62bd4e-22e2-45c6-870f-52d735de8b77","ipAddress":"::1","savingType":"chit","amountPaise":200000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"4250000","balanceAfter":"4050000","amountINR":"₹2,000.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 201 in 3.2s (compile: 2ms, render: 3.2s)
+{"timestamp":"2026-03-09T12:39:12.748Z","action":"create_saving","status":"success","durationMs":2862,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"793766f7-ca2f-4c40-af03-1bb31bd6b9b7","ipAddress":"::1","savingType":"ef","amountPaise":500000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"4050000","balanceAfter":"3550000","amountINR":"₹5,000.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 201 in 2.9s (compile: 3ms, render: 2.9s)
+ GET /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings/current-month 200 in 2.4s (compile: 516ms, render: 1910ms)
+{"timestamp":"2026-03-09T12:39:16.779Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"920d3e2a-c499-4e8a-8a87-fae178609812","ipAddress":"::1","savingType":"custom","amountPaise":4000000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"3550000","failureReason":"INSUFFICIENT_BALANCE","amountINR":"₹40,000.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 400 in 1597ms (compile: 3ms, render: 1594ms)
+{"timestamp":"2026-03-09T12:39:19.652Z","action":"create_saving","status":"success","durationMs":2863,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"43b22bba-9c99-4488-a33c-94525a8042e8","ipAddress":"::1","savingType":"custom","amountPaise":3550000,"isOverride":false,"month":"2026-03","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"3550000","balanceAfter":"0","amountINR":"₹35,500.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 201 in 2.9s (compile: 3ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:39:19.664Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"a69c5bf9-d420-43ee-829c-2fd09d3e4861","ipAddress":"::1","savingType":"rd","isOverride":false,"failureReason":"VALIDATION_ERROR"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 10ms (compile: 3ms, render: 7ms)
+{"timestamp":"2026-03-09T12:39:19.676Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"0ef15c27-e147-443a-8cab-ea5e2b3dee9e","ipAddress":"::1","savingType":"rd","amountPaise":0,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹0.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 5ms (compile: 922µs, render: 5ms)
+{"timestamp":"2026-03-09T12:39:19.682Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"b919e715-b95b-4486-ac00-70806eeb1cc5","ipAddress":"::1","savingType":"rd","amountPaise":-500,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹-5.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 5ms (compile: 930µs, render: 4ms)
+{"timestamp":"2026-03-09T12:39:19.689Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"1eff1a66-14d6-4712-a753-1398c7441676","ipAddress":"::1","savingType":"rd","amountPaise":13000.5,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹130.01"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 6ms (compile: 1658µs, render: 5ms)
+{"timestamp":"2026-03-09T12:39:19.697Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"5a8fe54a-164f-4879-aad0-a884fae20998","ipAddress":"::1","savingType":"stocks","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 4ms (compile: 865µs, render: 3ms)
+{"timestamp":"2026-03-09T12:39:19.705Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"300dc7ee-8993-4c4b-a9d7-dfed60944a9f","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 5ms (compile: 1298µs, render: 3ms)
+{"timestamp":"2026-03-09T12:39:19.711Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"f81ff4fe-e904-4dbd-8e8e-6a65519a1ab1","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 4ms (compile: 984µs, render: 3ms)
+{"timestamp":"2026-03-09T12:39:19.722Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"a35fe94c-0aae-417b-b517-3d413ac2c763","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 6ms (compile: 2ms, render: 3ms)
+{"timestamp":"2026-03-09T12:39:19.731Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"1c876bc9-fbb8-48f9-a5aa-89e70a837c0f","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 422 in 6ms (compile: 1555µs, render: 4ms)
+ GET /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings/current-month 200 in 1277ms (compile: 2ms, render: 1274ms)
+ DELETE /api/api/savings/b92bfe33-e7bc-4a17-bdc3-37c678d8c718 404 in 612ms (compile: 508ms, render: 104ms)
+{"timestamp":"2026-03-09T12:39:23.225Z","action":"create_saving","status":"failed","durationMs":0,"userId":"53206e32-9b7a-48b5-b870-b55dcd73bd4e","requestId":"a8770c5a-a822-4bad-8d05-75554a24a166","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"month":"2020-01","bankId":"002b1ac1-f9fc-478c-be2b-c431174cd42a","balanceBefore":"0","failureReason":"INSUFFICIENT_BALANCE","amountINR":"₹1.00"}
+ POST /api/users/53206e32-9b7a-48b5-b870-b55dcd73bd4e/savings 400 in 1599ms (compile: 3ms, render: 1596ms)
+ POST /api/auth/register 201 in 2.9s (compile: 6ms, render: 2.9s)
+ POST /api/banks 201 in 325ms (compile: 1763µs, render: 323ms)
+ POST /api/auth/register 201 in 2.5s (compile: 5ms, render: 2.5s)
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/banks/select 200 in 649ms (compile: 7ms, render: 642ms)
+ GET /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/banks/current 200 in 961ms (compile: 4ms, render: 957ms)
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/banks/select 404 in 7ms (compile: 4ms, render: 3ms)
+ POST /api/users/030cecc6-2e8c-4236-85b0-819fcc77bd56/banks/select 404 in 325ms (compile: 1396µs, render: 323ms)
+{"timestamp":"2026-03-09T12:42:13.124Z","action":"create_saving","status":"success","durationMs":2860,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"94c4ece4-cd62-498d-bff6-613855d5fc6f","ipAddress":"::1","savingType":"rd","amountPaise":1300000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"5600000","balanceAfter":"4300000","amountINR":"₹13,000.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 2.9s (compile: 4ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:42:15.990Z","action":"create_saving","status":"success","durationMs":2859,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"3f40d81a-f5f3-4adf-be80-2a1ef8e00dfe","ipAddress":"::1","savingType":"sip","amountPaise":50000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"4300000","balanceAfter":"4250000","amountINR":"₹500.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 2.9s (compile: 2ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:42:18.862Z","action":"create_saving","status":"success","durationMs":2861,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"7ceba2f2-6897-4b7f-947f-dbf6fd62a174","ipAddress":"::1","savingType":"chit","amountPaise":200000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"4250000","balanceAfter":"4050000","amountINR":"₹2,000.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 2.9s (compile: 3ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:42:22.050Z","action":"create_saving","status":"success","durationMs":3177,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"0bff3687-5419-4102-84ef-8d46b1e38ca9","ipAddress":"::1","savingType":"ef","amountPaise":500000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"4050000","balanceAfter":"3550000","amountINR":"₹5,000.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 3.2s (compile: 3ms, render: 3.2s)
+ GET /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings/current-month 200 in 1280ms (compile: 5ms, render: 1275ms)
+{"timestamp":"2026-03-09T12:42:24.619Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"d6a889d0-3b57-4ad6-9466-980ec318c45e","ipAddress":"::1","savingType":"custom","amountPaise":4000000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"3550000","failureReason":"INSUFFICIENT_BALANCE","amountINR":"₹40,000.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 400 in 1281ms (compile: 5ms, render: 1277ms)
+{"timestamp":"2026-03-09T12:42:27.487Z","action":"create_saving","status":"success","durationMs":2860,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"f5d525fa-6813-410b-b3e7-289e047be0ef","ipAddress":"::1","savingType":"custom","amountPaise":3550000,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"3550000","balanceAfter":"0","amountINR":"₹35,500.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 2.9s (compile: 2ms, render: 2.9s)
+{"timestamp":"2026-03-09T12:42:27.495Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"043540d3-5dec-4b9f-86b4-603711115f77","ipAddress":"::1","savingType":"rd","isOverride":false,"failureReason":"VALIDATION_ERROR"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 6ms (compile: 3ms, render: 3ms)
+{"timestamp":"2026-03-09T12:42:27.504Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"8c4486fb-c3c8-4a91-994a-379d018e6584","ipAddress":"::1","savingType":"rd","amountPaise":0,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹0.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 6ms (compile: 1131µs, render: 4ms)
+{"timestamp":"2026-03-09T12:42:27.518Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"9470d936-1dc3-4040-bc19-f8e746baedb5","ipAddress":"::1","savingType":"rd","amountPaise":-500,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹-5.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 9ms (compile: 2ms, render: 7ms)
+{"timestamp":"2026-03-09T12:42:27.529Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"180f883a-0848-4836-890f-e566deb0366f","ipAddress":"::1","savingType":"rd","amountPaise":13000.5,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹130.01"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 7ms (compile: 1302µs, render: 5ms)
+{"timestamp":"2026-03-09T12:42:27.548Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"f1454c9a-f6db-45ed-8706-04c8b0f10438","ipAddress":"::1","savingType":"stocks","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 4ms (compile: 1186µs, render: 3ms)
+{"timestamp":"2026-03-09T12:42:27.553Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"b6a7960b-5fb2-448a-a246-2319f3ab952e","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 4ms (compile: 826µs, render: 3ms)
+{"timestamp":"2026-03-09T12:42:27.561Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"69f81dfd-f0cf-41d4-9c85-98de06c10a13","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 3ms (compile: 904µs, render: 3ms)
+{"timestamp":"2026-03-09T12:42:27.566Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"f5cbff07-d83f-4f64-a14d-749effd856a4","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 6ms (compile: 1003µs, render: 5ms)
+{"timestamp":"2026-03-09T12:42:27.576Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"d50b465c-b865-44b2-bca4-0d2365035978","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 4ms (compile: 922µs, render: 3ms)
+ GET /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings/current-month 200 in 1279ms (compile: 4ms, render: 1275ms)
+ DELETE /api/savings/809e25d8-2d14-4f5c-ba65-1129d0c73520 200 in 4.7s (compile: 540ms, render: 4.2s)
+{"timestamp":"2026-03-09T12:42:40.622Z","action":"create_saving","status":"success","durationMs":7051,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"2f1cc2b5-eb6a-4862-9ad9-9d7ecec4e867","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"month":"2020-01","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"3550000","balanceAfter":"3549900","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 201 in 7.1s (compile: 4ms, render: 7.1s)
+{"timestamp":"2026-03-09T12:42:41.550Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"b42b3017-caa7-42f9-b53a-4271eca4ea06","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"month":"2026-03","bankId":"c02576d9-c6ae-4820-8fe6-aebbd3c40da4","balanceBefore":"3549900","failureReason":"SAVING_EXISTS","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 409 in 921ms (compile: 3ms, render: 918ms)
+{"timestamp":"2026-03-09T12:42:42.165Z","action":"create_saving","status":"failed","durationMs":0,"userId":"3d3a1a83-d343-4daa-b363-088f5f9ffcc4","requestId":"46469d56-d58a-41da-b979-7e32c8097693","ipAddress":"::1","idempotencyKey":"test-key-1773060161551","savingType":"custom","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/3d3a1a83-d343-4daa-b363-088f5f9ffcc4/savings 422 in 614ms (compile: 2ms, render: 612ms)
+ POST /api/auth/register 201 in 4.3s (compile: 8ms, render: 4.3s)
+ POST /api/banks 201 in 619ms (compile: 3ms, render: 616ms)
+ POST /api/auth/register 201 in 2.4s (compile: 3ms, render: 2.4s)
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/banks/select 200 in 925ms (compile: 6ms, render: 920ms)
+ GET /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/banks/current 200 in 1228ms (compile: 5ms, render: 1223ms)
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/banks/select 404 in 6ms (compile: 3ms, render: 3ms)
+ POST /api/users/0067e146-f104-47de-809b-73e186d16a28/banks/select 404 in 307ms (compile: 1075µs, render: 306ms)
+{"timestamp":"2026-03-09T12:43:38.269Z","action":"create_saving","status":"success","durationMs":2757,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"885c15b8-7522-4353-bfde-2f20045354d2","ipAddress":"::1","savingType":"rd","amountPaise":1300000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"5600000","balanceAfter":"4300000","amountINR":"₹13,000.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 2.8s (compile: 2ms, render: 2.8s)
+{"timestamp":"2026-03-09T12:43:41.029Z","action":"create_saving","status":"success","durationMs":2751,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"a28d8b16-cf93-4312-af91-2419f4969a4c","ipAddress":"::1","savingType":"sip","amountPaise":50000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"4300000","balanceAfter":"4250000","amountINR":"₹500.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 2.8s (compile: 3ms, render: 2.8s)
+{"timestamp":"2026-03-09T12:43:44.085Z","action":"create_saving","status":"success","durationMs":3045,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"b41b2c4a-1e6c-44d6-a587-ee3365b23eaa","ipAddress":"::1","savingType":"chit","amountPaise":200000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"4250000","balanceAfter":"4050000","amountINR":"₹2,000.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 3.1s (compile: 4ms, render: 3.0s)
+{"timestamp":"2026-03-09T12:43:46.840Z","action":"create_saving","status":"success","durationMs":2744,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"b2b9201b-2037-4b98-86ca-e9e0139543d9","ipAddress":"::1","savingType":"ef","amountPaise":500000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"4050000","balanceAfter":"3550000","amountINR":"₹5,000.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 2.8s (compile: 3ms, render: 2.7s)
+ GET /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings/current-month 200 in 1842ms (compile: 3ms, render: 1839ms)
+{"timestamp":"2026-03-09T12:43:50.296Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"85124075-b8d4-48c8-998e-ab3e106e938e","ipAddress":"::1","savingType":"custom","amountPaise":4000000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"3550000","failureReason":"INSUFFICIENT_BALANCE","amountINR":"₹40,000.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 400 in 1560ms (compile: 21ms, render: 1539ms)
+{"timestamp":"2026-03-09T12:43:53.049Z","action":"create_saving","status":"success","durationMs":2743,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"abfc63fc-6258-4a28-a819-070a95ad82b2","ipAddress":"::1","savingType":"custom","amountPaise":3550000,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"3550000","balanceAfter":"0","amountINR":"₹35,500.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 2.7s (compile: 3ms, render: 2.7s)
+{"timestamp":"2026-03-09T12:43:53.057Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"c77d40fc-6d79-498f-a27a-6f4fa3a33753","ipAddress":"::1","savingType":"rd","isOverride":false,"failureReason":"VALIDATION_ERROR"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 5ms (compile: 2ms, render: 3ms)
+{"timestamp":"2026-03-09T12:43:53.063Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"58bdb5b2-1df9-465f-b60f-5d548277f0ee","ipAddress":"::1","savingType":"rd","amountPaise":0,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹0.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 4ms (compile: 1214µs, render: 3ms)
+{"timestamp":"2026-03-09T12:43:53.069Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"4b70b278-4338-43d9-9226-dbdfe9097451","ipAddress":"::1","savingType":"rd","amountPaise":-500,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹-5.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 3ms (compile: 1076µs, render: 2ms)
+{"timestamp":"2026-03-09T12:43:53.074Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"6618e940-1241-4c79-8cd9-7372ec3d5fca","ipAddress":"::1","savingType":"rd","amountPaise":13000.5,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹130.01"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 3ms (compile: 812µs, render: 2ms)
+{"timestamp":"2026-03-09T12:43:53.081Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"35cd0291-36a8-4c72-9101-324ecfe5b2c1","ipAddress":"::1","savingType":"stocks","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 4ms (compile: 804µs, render: 4ms)
+{"timestamp":"2026-03-09T12:43:53.087Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"ae41c51f-9032-46b8-93b3-76934b2b15b6","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 3ms (compile: 871µs, render: 2ms)
+{"timestamp":"2026-03-09T12:43:53.094Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"4f4e3136-13ec-42fe-ac61-7b0323140a1c","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 5ms (compile: 911µs, render: 4ms)
+{"timestamp":"2026-03-09T12:43:53.100Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"fa7f87a7-2b77-4c3a-9a74-03ce54e79c32","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":false,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 5ms (compile: 969µs, render: 4ms)
+{"timestamp":"2026-03-09T12:43:53.113Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"0e4214b5-094f-44cc-a6ef-f6f082ef39d5","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"failureReason":"VALIDATION_ERROR","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 422 in 5ms (compile: 2ms, render: 3ms)
+ GET /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings/current-month 200 in 1237ms (compile: 3ms, render: 1234ms)
+ DELETE /api/savings/21e0aba4-4aac-4698-add9-5d3e6c8aab1f 200 in 4.0s (compile: 5ms, render: 4.0s)
+{"timestamp":"2026-03-09T12:44:01.378Z","action":"create_saving","status":"success","durationMs":3048,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"ae1400b7-c890-4bac-b815-fe7f037183d6","ipAddress":"::1","savingType":"sip","amountPaise":100,"isOverride":true,"month":"2020-01","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"3550000","balanceAfter":"3549900","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 3.1s (compile: 3ms, render: 3.1s)
+{"timestamp":"2026-03-09T12:44:02.307Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"f063ff92-6058-4ca0-8dde-3761f252b40b","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"month":"2026-03","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"3549900","failureReason":"SAVING_EXISTS","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 409 in 925ms (compile: 4ms, render: 920ms)
+{"timestamp":"2026-03-09T12:44:05.364Z","action":"create_saving","status":"success","durationMs":3047,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"398aebcc-7ce8-4212-93db-5fb2bf44f25b","ipAddress":"::1","idempotencyKey":"test-key-1773060242309","savingType":"custom","amountPaise":100,"isOverride":true,"month":"2020-01","bankId":"d6e881bf-3702-44a4-9d23-3bfd6d17d0be","balanceBefore":"3549900","balanceAfter":"3549800","amountINR":"₹1.00"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 201 in 3.1s (compile: 3ms, render: 3.1s)
+{"timestamp":"2026-03-09T12:44:06.287Z","action":"create_saving","status":"duplicate_ignored","durationMs":914,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"d01da478-c9e7-4a9f-9732-143fa626c9c1","ipAddress":"::1","idempotencyKey":"test-key-1773060242309"}
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 200 in 920ms (compile: 3ms, render: 917ms)
+ POST /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings 401 in 5ms (compile: 3ms, render: 3ms)
+{"timestamp":"2026-03-09T12:44:06.302Z","action":"create_saving","status":"failed","durationMs":0,"userId":"4cadb7df-5528-4edd-8cf6-59ec48aaf1e6","requestId":"6eaa3977-8333-4863-8daa-a6ec476aba03","ipAddress":"::1","failureReason":"Path userId doesn't match token"}
+ POST /api/users/wrong-id/savings 403 in 4ms (compile: 1089µs, render: 3ms)
+ GET /api/users/4cadb7df-5528-4edd-8cf6-59ec48aaf1e6/savings/current-month 403 in 6ms (compile: 3ms, render: 3ms)
+{"timestamp":"2026-03-09T12:44:06.623Z","action":"create_saving","status":"failed","durationMs":0,"userId":"0067e146-f104-47de-809b-73e186d16a28","requestId":"053e053f-07bd-4470-9bf9-05f5ef022b1d","ipAddress":"::1","savingType":"rd","amountPaise":100,"isOverride":false,"month":"2026-03","failureReason":"NO_CURRENT_BANK","amountINR":"₹1.00"}
+ POST /api/users/0067e146-f104-47de-809b-73e186d16a28/savings 404 in 311ms (compile: 942µs, render: 310ms)
+ POST /api/banks 201 in 313ms (compile: 2ms, render: 310ms)
+ POST /api/users/0067e146-f104-47de-809b-73e186d16a28/banks/select 200 in 617ms (compile: 3ms, render: 614ms)
+{"timestamp":"2026-03-09T12:44:10.307Z","action":"create_saving","status":"success","durationMs":2743,"userId":"0067e146-f104-47de-809b-73e186d16a28","requestId":"2c50fb59-9815-4873-856c-b5186fa4b8f2","ipAddress":"::1","savingType":"rd","amountPaise":3000,"isOverride":false,"month":"2026-03","bankId":"4eaec7c6-a4c3-4048-a07f-b7ce07c1eb2d","balanceBefore":"5000","balanceAfter":"2000","amountINR":"₹30.00"}
+ POST /api/users/0067e146-f104-47de-809b-73e186d16a28/savings 201 in 2.7s (compile: 2ms, render: 2.7s)
+{"timestamp":"2026-03-09T12:44:12.283Z","action":"create_saving","status":"failed","durationMs":0,"userId":"0067e146-f104-47de-809b-73e186d16a28","requestId":"8a87a873-a05f-4b36-93dc-ef575c704a1d","ipAddress":"::1","savingType":"sip","amountPaise":3000,"isOverride":false,"month":"2026-03","bankId":"4eaec7c6-a4c3-4048-a07f-b7ce07c1eb2d","balanceBefore":"2000","failureReason":"INSUFFICIENT_BALANCE","amountINR":"₹30.00"}
+ POST /api/users/0067e146-f104-47de-809b-73e186d16a28/savings 400 in 4.7s (compile: 1055µs, render: 4.7s)

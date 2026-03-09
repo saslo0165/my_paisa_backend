@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, notFoundResponse } from '@/lib/middleware'
 import { encryptText } from '@/lib/encrypt'
+import { jsonResponse } from '@/lib/currency'
 
 /**
  * PUT /api/banks/:id
@@ -16,7 +17,7 @@ export async function PUT(request, { params }) {
         const body = await request.json()
 
         // Find bank where id AND userId match (security)
-        const bank = await prisma.bankAccount.findFirst({
+        const bank = await prisma.bank.findFirst({
             where: { id, userId: user.userId }
         })
 
@@ -27,15 +28,21 @@ export async function PUT(request, { params }) {
         if (body.accountNumber) {
             updateData.accountNumber = encryptText(body.accountNumber)
         }
-        // ifscCode removed from schema
 
-        const updatedBank = await prisma.bankAccount.update({
+        // Remove balancePaise from body if they try to update balance directly
+        // Balance should be updated via transactions/expenses/savings
+        delete updateData.balancePaise
+        delete updateData.initialBalance
+        delete updateData.balance
+
+        const updatedBank = await prisma.bank.update({
             where: { id },
             data: updateData
         })
 
-        return Response.json(updatedBank)
+        return jsonResponse(updatedBank)
     } catch (error) {
+        console.error("PUT /api/banks/:id Error:", error)
         return serverErrorResponse(error)
     }
 }
@@ -53,35 +60,60 @@ export async function DELETE(request, { params }) {
         const { id } = await params
 
         // Find bank where id AND userId match
-        const bank = await prisma.bankAccount.findFirst({
+        const bank = await prisma.bank.findFirst({
             where: { id, userId: user.userId },
-            include: { _count: { select: { expenses: true } } }
+            include: { _count: { select: { expenses: true, savings: true } } }
         })
 
         if (!bank) return notFoundResponse("Bank account")
 
-        // In a real app, we might want to use a transaction to set bankId to null 
-        // on related expenses before deleting.
         await prisma.$transaction(async (tx) => {
-            // Set bankId to null on related expenses
+            // Unlink expenses
             await tx.expense.updateMany({
                 where: { bankId: id },
                 data: { bankId: null }
             })
 
-            // Delete related MonthlyBalance records
+            // Delete MonthlyBalance records
             await tx.monthlyBalance.deleteMany({
                 where: { bankId: id }
             })
 
-            // Delete the bank
-            await tx.bankAccount.delete({
+            // Fetch related savings to delete their audits first
+            const savings = await tx.saving.findMany({
+                where: { bankId: id },
+                select: { id: true }
+            })
+            const savingIds = savings.map(s => s.id)
+
+            // Delete saving audits linked to this bank OR these savings
+            if (savingIds.length > 0) {
+                await tx.savingAudit.deleteMany({
+                    where: {
+                        OR: [
+                            { bankId: id },
+                            { savingId: { in: savingIds } }
+                        ]
+                    }
+                })
+            } else {
+                await tx.savingAudit.deleteMany({ where: { bankId: id } })
+            }
+
+            // Delete savings
+            await tx.saving.deleteMany({
+                where: { bankId: id }
+            })
+
+            // Finally, delete the bank
+            await tx.bank.delete({
                 where: { id }
             })
         })
 
-        return Response.json({ message: "Bank account deleted successfully" })
+        return jsonResponse({ message: "Bank account deleted successfully" })
     } catch (error) {
+        console.error("DELETE /api/banks/:id Error:", error)
         return serverErrorResponse(error)
     }
 }

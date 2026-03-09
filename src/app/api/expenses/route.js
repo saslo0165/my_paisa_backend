@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import { requireAuth, unauthorizedResponse, serverErrorResponse, badRequestResponse } from '@/lib/middleware'
 import { validateRequired, validateAmount } from '@/lib/validate'
+import { toPaise, jsonResponse } from '@/lib/currency'
 
 /**
  * GET /api/expenses
@@ -52,7 +53,7 @@ export async function GET(request) {
             })
         ])
 
-        return Response.json({
+        return jsonResponse({
             expenses,
             total: totalCount,
             limit,
@@ -100,7 +101,7 @@ export async function POST(request) {
         // 2. Verify Bank/Card Ownership
         let bank = null
         if (bankId) {
-            bank = await prisma.bankAccount.findFirst({
+            bank = await prisma.bank.findFirst({
                 where: { id: bankId, userId: user.userId }
             })
             if (!bank) return Response.json({ error: "Forbidden", message: "Bank does not belong to you" }, { status: 403 })
@@ -114,39 +115,38 @@ export async function POST(request) {
             if (!card) return Response.json({ error: "Forbidden", message: "Credit card does not belong to you" }, { status: 403 })
         }
 
+        const amountPaise = toPaise(amount)
+
         // 3. Prisma Transaction
         const result = await prisma.$transaction(async (tx) => {
             // a. Create expense
             const newExpense = await tx.expense.create({
                 data: {
                     userId: user.userId,
-                    amount,
+                    amount, // Expense uses Float still
                     categoryId,
                     note,
                     date: new Date(date),
                     month,
                     paymentMethod,
                     bankId,
-                    // Note: If you want to store cardId in expense table, 
-                    // you should have added it to the schema in Step 1.
-                    // Checking schema... Step 1 didn't include cardId in Expense model.
-                    // I will add it to schema now to avoid data loss.
+                    cardId
                 }
             })
 
             let updatedBankBalance = null
             let updatedCardCycleSpend = null
 
-            // b. Handle Bank deduction
+            // b. Handle Bank deduction using BigInt logic
             if (['upi', 'debit'].includes(paymentMethod) && bankId) {
-                if (bank.balance < amount) {
+                if (bank.balancePaise < amountPaise) {
                     throw new Error("Insufficient bank balance")
                 }
-                const updatedBank = await tx.bankAccount.update({
+                const updatedBank = await tx.bank.update({
                     where: { id: bankId },
-                    data: { balance: { decrement: amount } }
+                    data: { balancePaise: { decrement: amountPaise } }
                 })
-                updatedBankBalance = updatedBank.balance
+                updatedBankBalance = updatedBank.balancePaise
             }
 
             // c. Handle Credit Card increment
@@ -187,9 +187,9 @@ export async function POST(request) {
             console.error("Budget check failed:", budgetErr)
         }
 
-        return Response.json({
+        return jsonResponse({
             expense: result.newExpense,
-            bankBalance: result.updatedBankBalance,
+            bankBalancePaise: result.updatedBankBalance,
             cardCycleSpend: result.updatedCardCycleSpend,
             message: "Expense added successfully"
         }, { status: 201 })

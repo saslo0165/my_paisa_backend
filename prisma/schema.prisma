@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-// Force rebuild for schema fix
 
 generator client {
   provider = "prisma-client-js"
@@ -11,32 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ── Users ──────────────────────────────────────────────
 model User {
-  id          String    @id @default(uuid())
-  name        String
-  email       String    @unique
-  phone       String?   @unique
-  password    String
-  isVerified  Boolean   @default(false)
-  fcmToken    String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  resetToken        String?
-  resetTokenExpiry  DateTime?
+  id               String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name             String       @db.VarChar(100)
+  email            String       @unique @db.VarChar(255)
+  phone            String?      @unique @db.VarChar(15)
+  password         String
+  fcmToken         String?
+  isVerified       Boolean      @default(false)
+  currentBankId    String?      @db.Uuid
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   // Relations
-  settings          UserSettings?
-  banks             BankAccount[]
-  expenses          Expense[]
-  creditCards       CreditCard[]
-  monthData         MonthData[]
-  monthlyBalances   MonthlyBalance[]
+  currentBank      Bank?        @relation("CurrentBank", fields: [currentBankId], references: [id], onDelete: SetNull)
+  banks            Bank[]       @relation("UserBanks")
+  savings          Saving[]
+  savingAudits     SavingAudit[]
+  settings         UserSettings?
+  expenses         Expense[]
+  creditCards      CreditCard[]
+  monthData        MonthData[]
+  monthlyBalances  MonthlyBalance[]
+
+  @@map("users")
 }
 
 model UserSettings {
-  id              String  @id @default(uuid())
-  userId          String  @unique
-  user            User    @relation(fields: [userId], references: [id])
+  id              String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId          String  @unique @db.Uuid
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   monthlySalary   Float   @default(56000)
   savingsPct      Float   @default(0.30)
   efTargetMonths  Float   @default(6)
@@ -47,25 +54,40 @@ model UserSettings {
   defaultEf       Float   @default(5000)
 }
 
-model BankAccount {
-  id              String           @id @default(uuid())
-  userId          String
-  user            User             @relation(fields: [userId], references: [id])
-  bankName        String
-  accountNumber   String
-  holderName      String
-  accountType     String
-  nickname        String?
-  balance         Float            @default(0)
-  createdAt       DateTime         @default(now())
-  expenses        Expense[]
-  monthlyBalances MonthlyBalance[]
+// ── Banks ───────────────────────────────────────────────
+model Bank {
+  id               String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId           String       @map("user_id") @db.Uuid
+  bankName         String       @map("bank_name") @db.VarChar(100)
+  nickname         String       @db.VarChar(100)
+  accountType      String       @map("account_type") @db.VarChar(50)
+  accountNumber    String       @map("account_number") @db.VarChar(255) // Still needed for encrypted
+  holderName       String       @map("holder_name") @db.VarChar(100)
+  
+  // Balance in PAISE (₹1 = 100 paise)
+  // BigInt handles up to ₹92 trillion safely
+  balancePaise     BigInt       @default(0) @map("balance_paise")
+  isActive         Boolean      @default(true) @map("is_active")
+  
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  user             User         @relation("UserBanks", fields: [userId], references: [id], onDelete: Cascade)
+  currentUser      User[]       @relation("CurrentBank")
+  savings          Saving[]
+  savingAudits     SavingAudit[]
+  expenses         Expense[]
+  monthlyBalances  MonthlyBalance[]
+
+  @@index([userId], name: "idx_banks_user_id")
+  @@map("banks")
 }
 
 model CreditCard {
-  id              String    @id @default(uuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId          String    @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   bankName        String
   nickname        String
   outstandingBill Float     @default(0)
@@ -78,11 +100,11 @@ model CreditCard {
 }
 
 model MonthlyBalance {
-  id           String      @id @default(uuid())
-  userId       String
-  user         User        @relation(fields: [userId], references: [id])
-  bankId       String
-  bank         BankAccount @relation(fields: [bankId], references: [id])
+  id           String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId       String      @db.Uuid
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankId       String      @db.Uuid
+  bank         Bank        @relation(fields: [bankId], references: [id], onDelete: Cascade)
   month        String
   balanceType  String      // "opening" or "closing"
   amount       Float
@@ -93,9 +115,9 @@ model MonthlyBalance {
 }
 
 model MonthData {
-  id               String    @id @default(uuid())
-  userId           String
-  user             User      @relation(fields: [userId], references: [id])
+  id               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId           String    @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   month            String    // Format "Mar '26"
   openingBalance   Float     @default(0)
   salary           Float     @default(0)
@@ -113,18 +135,74 @@ model MonthData {
 }
 
 model Expense {
-  id            String       @id @default(uuid())
-  userId        String
-  user          User         @relation(fields: [userId], references: [id])
+  id            String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId        String       @db.Uuid
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount        Float
   categoryId    String
   note          String?
   date          DateTime
   month         String
   paymentMethod String
-  bankId        String?
-  bank          BankAccount? @relation(fields: [bankId], references: [id])
-  cardId        String?
+  bankId        String?      @db.Uuid
+  bank          Bank?        @relation(fields: [bankId], references: [id])
+  cardId        String?      @db.Uuid
   card          CreditCard?  @relation(fields: [cardId], references: [id])
   createdAt     DateTime     @default(now())
+}
+
+// ── Savings ─────────────────────────────────────────────
+model Saving {
+  id               String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId           String       @map("user_id") @db.Uuid
+  bankId           String       @map("bank_id") @db.Uuid
+  
+  // YYYY-MM format enforced by check constraint
+  month            String       @db.VarChar(7)
+  amountPaise      BigInt       @map("amount_paise")
+  savingType       String       @map("saving_type") @db.VarChar(20)
+  note             String?
+  isOverride       Boolean      @default(false) @map("is_override")
+  overrideReason   String?      @map("override_reason")
+  idempotencyKey   String?      @unique @map("idempotency_key") @db.VarChar(255)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bank             Bank         @relation(fields: [bankId], references: [id])
+  audit            SavingAudit?
+
+  @@unique([userId, month, savingType])
+  @@index([userId, month], name: "idx_savings_user_month")
+  @@index([bankId], name: "idx_savings_bank_id")
+  @@map("savings")
+}
+
+// ── Saving Audits ────────────────────────────────────────
+model SavingAudit {
+  id                 String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId             String       @map("user_id") @db.Uuid
+  savingId           String?      @unique @map("saving_id") @db.Uuid
+  month              String       @db.VarChar(7)
+  amountPaise        BigInt       @map("amount_paise")
+  bankId             String       @map("bank_id") @db.Uuid
+  savingType         String       @map("saving_type") @db.VarChar(20)
+  status             String       @db.VarChar(20)
+  failureReason      String?      @map("failure_reason")
+  bankBalanceBefore  BigInt       @map("bank_balance_before")
+  bankBalanceAfter   BigInt?      @map("bank_balance_after")
+  ipAddress          String?      @map("ip_address") @db.VarChar(45)
+  idempotencyKey     String?      @map("idempotency_key") @db.VarChar(255)
+  isOverride         Boolean      @default(false) @map("is_override")
+  overrideReason     String?      @map("override_reason")
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  user               User         @relation(fields: [userId], references: [id])
+  saving             Saving?      @relation(fields: [savingId], references: [id])
+  bank               Bank         @relation(fields: [bankId], references: [id])
+
+  @@index([userId], name: "idx_audits_user_id")
+  @@index([savingId], name: "idx_audits_saving_id")
+  @@map("saving_audits")
 }
