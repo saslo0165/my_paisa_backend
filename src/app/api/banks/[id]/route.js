@@ -71,16 +71,6 @@ export async function DELETE(request, { params }) {
                 data: { bankId: null }
             })
 
-            // Set bankId to null on related MonthlyBalance
-            await tx.monthlyBalance.updateMany({
-                where: { bankId: id },
-                data: { bankId: id } // This is logically wrong if deleting, but user says "warn user but still allow delete"
-                // Actually if deleting a bank, balances tied to it might lose reference.
-                // The MonthlyBalance model has bankId as required in my schema.
-                // If the user wants to keep the records, we might need a CASCADE delete or SET NULL.
-                // I'll just delete the balances too or let Prisma handle it.
-            })
-
             // Delete related MonthlyBalance records
             await tx.monthlyBalance.deleteMany({
                 where: { bankId: id }
