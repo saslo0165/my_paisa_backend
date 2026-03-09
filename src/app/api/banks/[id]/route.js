@@ -12,7 +12,7 @@ export async function PUT(request, { params }) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
         const body = await request.json()
 
         // Find bank where id AND userId match (security)

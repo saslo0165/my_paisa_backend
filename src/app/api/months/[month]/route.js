@@ -12,7 +12,8 @@ export async function GET(request, { params }) {
         if (!user) return unauthorizedResponse()
 
         // Handle URL encoded month: "Mar '26" -> "Mar%20'26"
-        const month = decodeURIComponent(params.month)
+        const { month: rawMonth } = await params
+        const month = decodeURIComponent(rawMonth)
 
         const monthData = await prisma.monthData.findUnique({
             where: { userId_month: { userId: user.userId, month } }
@@ -136,6 +137,7 @@ export async function PUT(request, { params }) {
         // Return updated month data (user can call GET again for full summary or we can re-fetch)
         return Response.json(updated)
     } catch (error) {
+        console.error("PUT /api/months/:month Error:", error)
         return serverErrorResponse(error)
     }
 }

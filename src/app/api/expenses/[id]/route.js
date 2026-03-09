@@ -106,6 +106,7 @@ export async function PUT(request, { params }) {
 
         return Response.json(updatedExpense)
     } catch (error) {
+        console.error("PUT /api/expenses/:id Error:", error)
         if (error.message === "Insufficient bank balance") {
             return badRequestResponse(error.message)
         }
