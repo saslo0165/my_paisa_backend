@@ -54,7 +54,6 @@ model BankAccount {
   accountNumber   String
   holderName      String
   accountType     String
-  accountType     String
   nickname        String?
   balance         Float            @default(0)
   createdAt       DateTime         @default(now())
