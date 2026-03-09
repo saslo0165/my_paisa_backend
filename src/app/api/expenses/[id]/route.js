@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
         const expense = await prisma.expense.findFirst({
             where: { id, userId: user.userId },
             include: {
@@ -24,6 +24,7 @@ export async function GET(request, { params }) {
 
         return Response.json(expense)
     } catch (error) {
+        console.error("GET /api/expenses/:id Error:", error)
         return serverErrorResponse(error)
     }
 }
@@ -38,7 +39,7 @@ export async function PUT(request, { params }) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
         const body = await request.json()
 
         // 1. Find existing expense
@@ -124,7 +125,7 @@ export async function DELETE(request, { params }) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
         const expense = await prisma.expense.findFirst({
             where: { id, userId: user.userId }
         })
@@ -175,6 +176,7 @@ export async function DELETE(request, { params }) {
             cardCycleSpend: result.updatedCardCycleSpend
         })
     } catch (error) {
+        console.error("DELETE /api/expenses/:id Error:", error)
         return serverErrorResponse(error)
     }
 }
