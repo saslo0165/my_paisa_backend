@@ -18,13 +18,18 @@ model User {
   password    String
   isVerified  Boolean   @default(false)
   fcmToken    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  resetToken        String?
+  resetTokenExpiry  DateTime?
 
   // Relations
-  settings    UserSettings?
-  banks       BankAccount[]
-  expenses    Expense[]
+  settings          UserSettings?
+  banks             BankAccount[]
+  expenses          Expense[]
+  creditCards       CreditCard[]
+  monthData         MonthData[]
+  monthlyBalances   MonthlyBalance[]
 }
 
 model UserSettings {
@@ -42,18 +47,69 @@ model UserSettings {
 }
 
 model BankAccount {
-  id            String    @id @default(uuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
-  bankName      String
-  accountNumber String
-  holderName    String
-  accountType   String
-  ifscCode      String?
-  branchAddress String?
-  nickname      String?
-  createdAt     DateTime  @default(now())
-  expenses      Expense[]
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  bankName        String
+  accountNumber   String
+  holderName      String
+  accountType     String
+  ifscCode        String?
+  branchAddress   String?
+  nickname        String?
+  createdAt       DateTime         @default(now())
+  expenses        Expense[]
+  monthlyBalances MonthlyBalance[]
+}
+
+model CreditCard {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  bankName        String
+  nickname        String
+  outstandingBill Float     @default(0)
+  cycleSpend      Float     @default(0)
+  billingDate     Int       @default(20)
+  dueDate         Int       @default(5)
+  creditLimit     Float     @default(100000)
+  createdAt       DateTime  @default(now())
+  expenses        Expense[]
+}
+
+model MonthlyBalance {
+  id           String      @id @default(uuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  bankId       String
+  bank         BankAccount @relation(fields: [bankId], references: [id])
+  month        String
+  balanceType  String      // "opening" or "closing"
+  amount       Float
+  note         String?
+  createdAt    DateTime    @default(now())
+
+  @@unique([userId, bankId, month, balanceType])
+}
+
+model MonthData {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  month            String    // Format "Mar '26"
+  openingBalance   Float     @default(0)
+  salary           Float     @default(0)
+  freelance        Float     @default(0)
+  otherIncome      Float     @default(0)
+  rdAmount         Float     @default(0)
+  sipAmount        Float     @default(0)
+  chitAmount       Float     @default(0)
+  efContribution   Float     @default(0)
+  savingsDeducted  Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([userId, month])
 }
 
 model Expense {
@@ -68,5 +124,7 @@ model Expense {
   paymentMethod String
   bankId        String?
   bank          BankAccount? @relation(fields: [bankId], references: [id])
+  cardId        String?
+  card          CreditCard?  @relation(fields: [cardId], references: [id])
   createdAt     DateTime     @default(now())
 }
