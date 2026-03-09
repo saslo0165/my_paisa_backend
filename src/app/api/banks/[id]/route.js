@@ -27,9 +27,7 @@ export async function PUT(request, { params }) {
         if (body.accountNumber) {
             updateData.accountNumber = encryptText(body.accountNumber)
         }
-        if (body.ifscCode) {
-            updateData.ifscCode = body.ifscCode.toUpperCase()
-        }
+        // ifscCode removed from schema
 
         const updatedBank = await prisma.bankAccount.update({
             where: { id },
@@ -52,7 +50,7 @@ export async function DELETE(request, { params }) {
         const user = requireAuth(request)
         if (!user) return unauthorizedResponse()
 
-        const { id } = params
+        const { id } = await params
 
         // Find bank where id AND userId match
         const bank = await prisma.bankAccount.findFirst({
