@@ -121,6 +121,11 @@ export async function PUT(request, { params }) {
 
         if (!existing) return notFoundResponse("No data found for this month")
 
+        // Prevent re-deduction if already deducted
+        if (body.savingsDeducted === true && existing.savingsDeducted === true) {
+            return badRequestResponse("Savings already marked as transferred for this month")
+        }
+
         // Validate amounts
         const amountFields = ['salary', 'freelance', 'otherIncome', 'rdAmount', 'sipAmount', 'chitAmount', 'efContribution', 'openingBalance']
         for (const field of amountFields) {
@@ -129,15 +134,64 @@ export async function PUT(request, { params }) {
             }
         }
 
-        // If openingBalance changing, user might want to update bank balance too?
-        // For now, simpler to just update MonthData.
+        let updated
 
-        const updated = await prisma.monthData.update({
+        // If marking savings as transferred, deduct from bank balance in a transaction
+        if (body.savingsDeducted === true && !existing.savingsDeducted) {
+            const { bankId } = body
+
+            if (!bankId) {
+                return badRequestResponse("bankId is required when marking savings as transferred")
+            }
+
+            // Verify bank belongs to user
+            const bank = await prisma.bankAccount.findFirst({
+                where: { id: bankId, userId: user.userId }
+            })
+            if (!bank) return notFoundResponse("Bank account")
+
+            // Calculate total savings to deduct
+            const rdAmount = body.rdAmount ?? existing.rdAmount
+            const sipAmount = body.sipAmount ?? existing.sipAmount
+            const chitAmount = body.chitAmount ?? existing.chitAmount
+            const efContribution = body.efContribution ?? existing.efContribution
+            const totalSavings = rdAmount + sipAmount + chitAmount + efContribution
+
+            if (bank.balance < totalSavings) {
+                return badRequestResponse(`Insufficient bank balance. Need ₹${totalSavings}, have ₹${bank.balance}`)
+            }
+
+            // Transaction: update monthData + deduct from bank
+            const result = await prisma.$transaction(async (tx) => {
+                const { bankId: _bankId, ...monthFields } = body
+                const monthData = await tx.monthData.update({
+                    where: { userId_month: { userId: user.userId, month } },
+                    data: { ...monthFields, savingsDeducted: true }
+                })
+
+                const updatedBank = await tx.bankAccount.update({
+                    where: { id: bankId },
+                    data: { balance: { decrement: totalSavings } }
+                })
+
+                return { monthData, updatedBank, totalSavings }
+            })
+
+            return Response.json({
+                ...result.monthData,
+                bankBalance: result.updatedBank.balance,
+                totalDeducted: result.totalSavings,
+                message: `₹${result.totalSavings} deducted from ${result.updatedBank.bankName || 'bank'} successfully`
+            })
+        }
+
+        // Normal update (no savings deduction)
+        const { bankId: _bankId, ...monthFields } = body
+        updated = await prisma.monthData.update({
             where: { userId_month: { userId: user.userId, month } },
-            data: body
+            data: monthFields
         })
 
-        // Return updated month data (user can call GET again for full summary or we can re-fetch)
         return Response.json(updated)
     } catch (error) {
         console.error("PUT /api/months/:month Error:", error)
