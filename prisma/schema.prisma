@@ -57,6 +57,7 @@ model BankAccount {
   ifscCode        String?
   branchAddress   String?
   nickname        String?
+  balance         Float            @default(0)
   createdAt       DateTime         @default(now())
   expenses        Expense[]
   monthlyBalances MonthlyBalance[]

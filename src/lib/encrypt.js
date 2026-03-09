@@ -12,7 +12,8 @@ export function encryptText(text) {
         console.error("ENCRYPTION_KEY is not defined in environment variables")
         return text // Fallback to plain text if key is missing (not ideal for production)
     }
-    return CryptoJS.AES.encrypt(text, ENCRYPTION_KEY).toString()
+    const strText = String(text)
+    return CryptoJS.AES.encrypt(strText, ENCRYPTION_KEY).toString()
 }
 
 /**
@@ -37,6 +38,7 @@ export function decryptText(encrypted) {
  */
 export function maskAccountNumber(accountNumber) {
     if (!accountNumber) return "XXXX"
-    const last4 = accountNumber.slice(-4)
+    const strMatch = String(accountNumber)
+    const last4 = strMatch.slice(-4)
     return `XXXX XXXX XXXX ${last4}`
 }
