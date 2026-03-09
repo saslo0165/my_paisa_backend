@@ -71,7 +71,7 @@ export async function POST(request) {
 
         const {
             bankName, accountNumber, holderName,
-            accountType, ifscCode, branchAddress, nickname,
+            accountType, nickname,
             initialBalance
         } = body
 
@@ -88,8 +88,6 @@ export async function POST(request) {
                 accountNumber: encryptedAccountNumber,
                 holderName,
                 accountType,
-                ifscCode: ifscCode?.toUpperCase(),
-                branchAddress,
                 nickname: finalNickname,
                 balance: initialBalance || 0
             }
